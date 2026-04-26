@@ -12,7 +12,7 @@ urlpatterns = [
     path("certificate/", views.certificate_lookup, name="certificate_lookup"),
     path("control-room/", views.admin_dashboard, name="admin_dashboard"),
     path("control-room/settings/", views.admin_settings, name="admin_settings"),
-    path("control-room/registration/<int:pk>/<str:status>/", views.admin_update_registration, name="admin_update_registration"),
     path("control-room/registration/<int:pk>/email/", views.admin_email_certificate, name="admin_email_certificate"),
+    path("control-room/registration/<int:pk>/<str:status>/", views.admin_update_registration, name="admin_update_registration"),
     path("control-room/export/", views.admin_export, name="admin_export"),
 ]
