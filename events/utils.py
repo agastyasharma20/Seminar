@@ -93,7 +93,7 @@ def generate_certificate(registration):
 
 
 def send_certificate_email(registration):
-    if not registration.certificate_pdf:
+    if not registration.certificate_pdf or not Path(registration.certificate_pdf.path).exists():
         generate_certificate(registration)
 
     subject = f"Certificate of Participation - {registration.event.title}"
