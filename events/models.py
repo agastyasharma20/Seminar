@@ -4,11 +4,11 @@ from django.utils import timezone
 
 
 class EventSettings(models.Model):
-    title = models.CharField(max_length=220, default="Web Application Security and Vulnerability Testing")
+    title = models.CharField(max_length=220, default="Urjotsav 2K26 - Annual Fest")
     organizer = models.CharField(max_length=220, default="Prestige Institute of Engineering Management and Research, Indore")
     organized_by = models.CharField(
         max_length=220,
-        default="Dept. of Computer Science Engineering & AIDS, PIEMR",
+        default="PIEMR Student Council & Cultural Committee",
     )
     event_scope = models.CharField(max_length=80, default="National Event")
     expert_name = models.CharField(max_length=120, default="Mr. Dhawal Shrivastava")
