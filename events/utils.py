@@ -29,37 +29,43 @@ def generate_certificate(registration):
     pdf = canvas.Canvas(str(output_path), pagesize=landscape(A4))
     width, height = landscape(A4)
 
-    # --- Background & Border ---
+    # --- Background & Watermark ---
     # Sophisticated cream background
     pdf.setFillColor(colors.HexColor("#FCFBF7"))
     pdf.rect(0, 0, width, height, fill=1, stroke=0)
+
+    # Subtle Watermark
+    pdf.rotate(35)
+    pdf.setFillColor(colors.HexColor("#F1F5F9"))
+    pdf.setFont("Helvetica-Bold", 100)
+    pdf.drawString(2 * inch, 0, "URJOTSAV 2K26")
+    pdf.rotate(-35)
 
     # Stylish Corner Accents (Blue & Orange)
     pdf.setFillColor(colors.HexColor("#061120")) # Dark Blue
     pdf.pathBegin()
     pdf.moveTo(0, height)
-    pdf.lineTo(1.5 * inch, height)
-    pdf.lineTo(0, height - 1.5 * inch)
+    pdf.lineTo(1.8 * inch, height)
+    pdf.lineTo(0, height - 1.8 * inch)
     pdf.pathClose()
     pdf.fill()
 
     pdf.setFillColor(colors.HexColor("#F97316")) # Orange
     pdf.pathBegin()
     pdf.moveTo(width, 0)
-    pdf.lineTo(width - 1.2 * inch, 0)
-    pdf.lineTo(width, 1.2 * inch)
+    pdf.lineTo(width - 1.5 * inch, 0)
+    pdf.lineTo(width, 1.5 * inch)
     pdf.pathClose()
     pdf.fill()
 
-    # Main Border
-    pdf.setStrokeColor(colors.HexColor("#D4AF37")) # Gold
+    # Main Border (Premium Gold)
+    pdf.setStrokeColor(colors.HexColor("#D4AF37"))
     pdf.setLineWidth(3)
     pdf.roundRect(0.25 * inch, 0.25 * inch, width - 0.5 * inch, height - 0.5 * inch, 10, stroke=1, fill=0)
     pdf.setLineWidth(1)
     pdf.roundRect(0.35 * inch, 0.35 * inch, width - 0.7 * inch, height - 0.7 * inch, 8, stroke=1, fill=0)
 
     # --- Header Section ---
-    # Institution Name
     pdf.setFillColor(colors.HexColor("#061120"))
     pdf.setFont("Helvetica-Bold", 22)
     pdf.drawCentredString(width / 2, height - 1.0 * inch, "PRESTIGE INSTITUTE OF ENGINEERING MANAGEMENT & RESEARCH, INDORE")
@@ -70,13 +76,12 @@ def generate_certificate(registration):
 
     # --- URJOTSAV 2K26 LOGO Area ---
     pdf.setFillColor(colors.HexColor("#061120"))
-    pdf.setFont("Helvetica-Bold", 36)
+    pdf.setFont("Helvetica-Bold", 38)
     pdf.drawCentredString(width / 2, height - 1.9 * inch, "URJOTSAV 2K26")
     
-    # Decorative lines for logo
     pdf.setStrokeColor(colors.HexColor("#F97316"))
     pdf.setLineWidth(4)
-    pdf.line(width/2 - 1.5*inch, height - 2.1*inch, width/2 + 1.5*inch, height - 2.1*inch)
+    pdf.line(width/2 - 1.6*inch, height - 2.1*inch, width/2 + 1.6*inch, height - 2.1*inch)
 
     # --- Title Banner ---
     banner_y = height - 2.8 * inch
@@ -91,44 +96,41 @@ def generate_certificate(registration):
     pdf.setFont("Helvetica", 16)
     pdf.drawCentredString(width / 2, height - 3.6 * inch, "This is to certify that")
 
-    # Participant Name (Grand & Bold)
     pdf.setFillColor(colors.HexColor("#061120"))
-    pdf.setFont("Helvetica-Bold", 32)
+    pdf.setFont("Helvetica-Bold", 34)
     pdf.drawCentredString(width / 2, height - 4.2 * inch, registration.full_name)
 
-    # Participation Text
     pdf.setFillColor(colors.HexColor("#475569"))
     pdf.setFont("Helvetica", 14)
-    text = f"has participated in the event '{event.title}'"
-    pdf.drawCentredString(width / 2, height - 4.7 * inch, text)
-    
-    text2 = f"organized as part of the Annual Technical, Cultural and Sports Festival Urjotsav 2K26."
-    pdf.drawCentredString(width / 2, height - 5.0 * inch, text2)
+    pdf.drawCentredString(width / 2, height - 4.75 * inch, f"has participated in the event '{event.title}'")
+    pdf.drawCentredString(width / 2, height - 5.05 * inch, "organized as part of the Annual Technical, Cultural and Sports Festival Urjotsav 2K26.")
 
-    # Date and Venue
     pdf.setFont("Helvetica-Bold", 12)
-    pdf.drawCentredString(width / 2, height - 5.4 * inch, f"Held on {event.event_date} at {event.venue}")
+    pdf.drawCentredString(width / 2, height - 5.45 * inch, f"Held on {event.event_date} at {event.venue}")
 
-    # --- Signature Section ---
-    sig_y = 1.6 * inch
-    pdf.setStrokeColor(colors.HexColor("#94A3B8"))
+    # --- DIGITAL SIGNATURE SECTION (Premium) ---
+    sig_box_y = 1.0 * inch
+    pdf.setStrokeColor(colors.HexColor("#E2E8F0"))
     pdf.setLineWidth(1)
+    pdf.roundRect(width/2 - 1.5*inch, sig_box_y, 3*inch, 0.7*inch, 5, stroke=1, fill=0)
     
-    # Left Signature
-    pdf.line(1.5 * inch, sig_y, 3.5 * inch, sig_y)
-    pdf.setFillColor(colors.HexColor("#061120"))
+    pdf.setFillColor(colors.HexColor("#22C55E")) # Success Green
     pdf.setFont("Helvetica-Bold", 11)
-    pdf.drawCentredString(2.5 * inch, sig_y - 0.2 * inch, "Event Coordinator")
+    pdf.drawCentredString(width / 2, sig_box_y + 0.45 * inch, "DIGITALLY SIGNED & VERIFIED")
     
-    # Right Signature
-    pdf.line(width - 3.5 * inch, sig_y, width - 1.5 * inch, sig_y)
-    pdf.drawCentredString(width - 2.5 * inch, sig_y - 0.2 * inch, "Senior Director")
+    pdf.setFillColor(colors.HexColor("#64748B"))
+    pdf.setFont("Helvetica", 8)
+    pdf.drawCentredString(width / 2, sig_box_y + 0.25 * inch, "Secured via PIEMR Digital Certification System")
+    pdf.drawCentredString(width / 2, sig_box_y + 0.12 * inch, f"Timestamp: {timezone.now().strftime('%Y-%m-%d %H:%M:%S')} IST")
 
     # --- Footer / ID ---
     pdf.setFillColor(colors.HexColor("#94A3B8"))
-    pdf.setFont("Helvetica", 9)
-    pdf.drawCentredString(width / 2, 0.6 * inch, f"Certificate ID: {cert_id}")
-    pdf.drawCentredString(width / 2, 0.45 * inch, "Verify at: seminar.pythonanywhere.com/certificate/")
+    pdf.setFont("Helvetica-Bold", 9)
+    pdf.drawCentredString(width / 2, 0.65 * inch, f"Certificate ID: {cert_id}")
+    
+    pdf.setFont("Helvetica", 8)
+    pdf.drawCentredString(width / 2, 0.48 * inch, "This is a computer-generated certificate and does not require a physical signature.")
+    pdf.drawCentredString(width / 2, 0.35 * inch, "Verify authenticity at: seminar.pythonanywhere.com/certificate/")
 
     pdf.save()
 
@@ -145,7 +147,7 @@ def send_certificate_email(registration):
     body = (
         f"Dear {registration.full_name},\n\n"
         f"Congratulations on your participation in Urjotsav 2K26 at PIEMR, Indore.\n"
-        f"Your certificate ID is {registration.certificate_id}. The certificate PDF is attached.\n\n"
+        f"Your certificate ID is {registration.certificate_id}. This is a digitally verified certificate.\n\n"
         "Regards,\nUrjotsav 2K26 Team\nPIEMR, Indore"
     )
     email = EmailMessage(subject, body, to=[registration.email])
