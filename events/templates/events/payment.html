@@ -1,0 +1,27 @@
+{% extends "events/base.html" %}
+{% block content %}
+<section class="form-layout">
+  <aside class="payment-summary reveal">
+    <p class="eyebrow">UPI Payment</p>
+    <h1>Pay ₹{{ event.fee }}</h1>
+    <p class="muted">Scan the QR code, complete payment, then upload the screenshot and transaction ID.</p>
+    {% if event.qr_code %}
+      <img class="qr" src="{{ event.qr_code.url }}" alt="UPI QR code">
+    {% else %}
+      <div class="qr empty">Admin has not uploaded QR code yet</div>
+    {% endif %}
+    <div class="upi-note">{{ event.upi_note }}</div>
+  </aside>
+
+  <form class="glass-form reveal" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <p class="eyebrow">Payment proof</p>
+    <h2>Submit verification details</h2>
+    {{ form.non_field_errors }}
+    {% for field in form %}
+      <label>{{ field.label }}{{ field }}{{ field.errors }}</label>
+    {% endfor %}
+    <button class="btn primary full" type="submit">Submit payment proof</button>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,6 @@
+__pycache__/
+*.py[cod]
+staticfiles/
+media/payments/
+media/certificates/
+media/qr/

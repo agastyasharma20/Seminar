@@ -1,0 +1,23 @@
+{% extends "events/base.html" %}
+{% block content %}
+<section class="center-card reveal">
+  <p class="eyebrow">Certificate Portal</p>
+  <h1>Verify or download certificate</h1>
+  <form class="lookup-form" method="post">
+    {% csrf_token %}
+    <input type="email" name="email" value="{{ email }}" placeholder="registered email address" required>
+    <button class="btn primary" type="submit">Search</button>
+  </form>
+  {% if result %}
+    <div class="result-card">
+      <strong>{{ result.full_name }}</strong>
+      <span>{{ result.get_status_display }}</span>
+      {% if result.status == "approved" and result.certificate_pdf %}
+        <a class="btn ghost" href="{{ result.certificate_pdf.url }}">Download certificate</a>
+      {% else %}
+        <p class="muted">Certificate unlocks after admin payment approval.</p>
+      {% endif %}
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

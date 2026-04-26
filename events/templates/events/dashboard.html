@@ -1,0 +1,72 @@
+{% extends "events/base.html" %}
+{% block content %}
+<section class="dashboard-head reveal">
+  <div>
+    <p class="eyebrow">Participant dashboard</p>
+    <h1>Hello, {{ user.username }}</h1>
+    <p class="muted">{{ event.title }} | {{ event.event_date }} | {{ event.venue }}</p>
+  </div>
+  <div class="status-pill {{ registration.status }}">{{ registration.get_status_display }}</div>
+</section>
+
+<section class="dashboard-overview reveal">
+  <article>
+    <span>Expert</span>
+    <strong>{{ event.expert_name }}</strong>
+    <p>{{ event.expert_title }}</p>
+  </article>
+  <article>
+    <span>Organized by</span>
+    <strong>{{ event.organized_by }}</strong>
+    <p>{{ event.organizer }}</p>
+  </article>
+  <article>
+    <span>Certificate</span>
+    <strong>{% if registration.status == "approved" %}Ready{% else %}Approval required{% endif %}</strong>
+    <p>Certificate is generated after payment verification.</p>
+  </article>
+</section>
+
+<section class="form-layout">
+  <form class="glass-form reveal" method="post" id="profileForm">
+    {% csrf_token %}
+    <p class="eyebrow">Profile</p>
+    <h2>Tell us who you are</h2>
+    {{ form.non_field_errors }}
+    <div class="field-grid base-fields">
+      <label>Full name{{ form.full_name }}{{ form.full_name.errors }}</label>
+      <label>Phone{{ form.phone }}{{ form.phone.errors }}</label>
+      <label>Participant type{{ form.participant_type }}{{ form.participant_type.errors }}</label>
+      <label>City{{ form.city }}{{ form.city.errors }}</label>
+    </div>
+    <div class="field-grid dynamic-fields">
+      <label data-for="student faculty researcher">Institution / University{{ form.institution }}{{ form.institution.errors }}</label>
+      <label data-for="student">Course{{ form.course }}{{ form.course.errors }}</label>
+      <label data-for="student">Branch{{ form.branch }}{{ form.branch.errors }}</label>
+      <label data-for="student">Year{{ form.year }}{{ form.year.errors }}</label>
+      <label data-for="faculty">Department{{ form.department }}{{ form.department.errors }}</label>
+      <label data-for="faculty industry">Designation{{ form.designation }}{{ form.designation.errors }}</label>
+      <label data-for="researcher">Research Area{{ form.research_area }}{{ form.research_area.errors }}</label>
+      <label data-for="industry">Company{{ form.company }}{{ form.company.errors }}</label>
+      <label data-for="industry">Experience{{ form.experience }}{{ form.experience.errors }}</label>
+    </div>
+    <button class="btn primary full" type="submit">Save profile</button>
+  </form>
+
+  <aside class="payment-summary reveal">
+    <p class="eyebrow">Next step</p>
+    <h2>Payment verification</h2>
+    <p class="muted">Registration is complete only after payment proof and transaction ID are submitted, then approved by admin.</p>
+    <div class="mini-stats">
+      <div><strong>₹{{ event.fee }}</strong><span>Fee</span></div>
+      <div><strong>Offline</strong><span>Event mode</span></div>
+    </div>
+    {% if registration.status != "draft" %}
+      <a class="btn primary full" href="{% url 'payment' %}">Go to payment</a>
+    {% endif %}
+    {% if registration.status == "approved" and registration.certificate_pdf %}
+      <a class="btn ghost full" href="{{ registration.certificate_pdf.url }}">Download certificate</a>
+    {% endif %}
+  </aside>
+</section>
+{% endblock %}

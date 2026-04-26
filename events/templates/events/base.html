@@ -1,0 +1,59 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ event_settings.title }}{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'events/css/site.css' %}">
+</head>
+<body>
+  <canvas class="matrix-canvas" id="matrixCanvas" aria-hidden="true"></canvas>
+  <div class="ambient"></div>
+  <div class="shell">
+    <nav class="topbar">
+      <a class="brand-lockup" href="{% url 'home' %}">
+        <img class="college-logo" src="{% static 'events/img/piemr-logo.svg' %}" alt="PIEMR">
+        <img class="event-strip" src="{% static 'events/img/event-header.jpeg' %}" alt="PIEMR Urjotsav IIC">
+      </a>
+      <div class="nav-actions">
+        {% if user.is_authenticated and user.is_staff %}
+          <a href="{% url 'admin_dashboard' %}">Control Room</a>
+        {% elif user.is_authenticated %}
+          <a href="{% url 'dashboard' %}">My Dashboard</a>
+        {% else %}
+          <a href="{% url 'login' %}">Login</a>
+        {% endif %}
+        {% if user.is_authenticated %}<a class="danger-link" href="{% url 'logout' %}">Logout</a>{% endif %}
+      </div>
+    </nav>
+
+    {% if messages %}
+      <div class="flash-stack">
+        {% for message in messages %}
+          <div class="flash {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <main>{% block content %}{% endblock %}</main>
+    <footer class="site-footer">
+      {% if event_settings.developer_linkedin %}
+        <a class="footer-credit" href="{{ event_settings.developer_linkedin }}" target="_blank" rel="noopener">
+          Designed and Developed with ❤️ by Agastya Sharma
+          <span>Open LinkedIn profile</span>
+        </a>
+      {% else %}
+        <span class="footer-credit">
+          Designed and Developed with ❤️ by Agastya Sharma
+          <span>Add Agastya's LinkedIn URL from admin settings</span>
+        </span>
+      {% endif %}
+    </footer>
+  </div>
+  <script src="{% static 'events/js/site.js' %}"></script>
+</body>
+</html>

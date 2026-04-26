@@ -1,0 +1,26 @@
+{% extends "events/base.html" %}
+{% block title %}{% if mode == "signup" %}Register{% else %}Login{% endif %} | {{ event_settings.title }}{% endblock %}
+{% block content %}
+<section class="auth-layout">
+  <div class="auth-panel reveal">
+    <p class="eyebrow">{% if mode == "signup" %}Create account first{% else %}Welcome back{% endif %}</p>
+    <h1>{% if mode == "signup" %}Register for the national seminar{% else %}Login to continue{% endif %}</h1>
+    <p class="muted">Participants create an account, complete profile details, then proceed to UPI payment upload for admin approval.</p>
+    <div class="auth-choice">
+      <a class="{% if mode == 'signup' %}active{% endif %}" href="{% url 'signup' %}">Register</a>
+      <a class="{% if mode == 'login' %}active{% endif %}" href="{% url 'login' %}">Login</a>
+    </div>
+  </div>
+  <form class="glass-form reveal" method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {% for field in form %}
+      <label>{{ field.label }}{{ field }}{{ field.errors }}</label>
+    {% endfor %}
+    <button class="btn primary full" type="submit">{% if mode == "signup" %}Create account{% else %}Login{% endif %}</button>
+    <p class="switch">
+      {% if mode == "signup" %}Already registered? <a href="{% url 'login' %}">Login</a>{% else %}New participant? <a href="{% url 'signup' %}">Create account</a>{% endif %}
+    </p>
+  </form>
+</section>
+{% endblock %}

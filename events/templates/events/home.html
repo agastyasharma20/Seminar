@@ -1,0 +1,168 @@
+{% extends "events/base.html" %}
+{% block content %}
+<section class="hero">
+  <div class="hero-mesh"></div>
+  <div class="cyber-field" aria-hidden="true">
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+  <div class="hero-copy reveal">
+    <p class="eyebrow">{{ event.event_scope }} | Independent Event</p>
+    <h1 class="glitch-title" data-text="{{ event.title }}">{{ event.title }}</h1>
+    <p class="lead">A premium offline security seminar for students, faculty, researchers, and industry professionals, designed around modern web application security assurance and vulnerability testing.</p>
+    <p class="organized-by">Organized by {{ event.organized_by }}</p>
+    <div class="gui-dock">
+      <div class="gui-status">
+        <span class="status-dot"></span>
+        <strong>Assessment Mode</strong>
+        <small>Web security lab interface</small>
+      </div>
+      <div class="gui-status">
+        <span class="status-dot green"></span>
+        <strong>Certificate Flow</strong>
+        <small>Admin verified participation</small>
+      </div>
+      <div class="gui-status">
+        <span class="status-dot amber"></span>
+        <strong>Offline Event</strong>
+        <small>PIEMR Civil Auditorium</small>
+      </div>
+    </div>
+    <div class="hero-actions">
+      {% if event.registration_open and event.seats_left > 0 %}
+        <a class="btn primary" href="{% url 'signup' %}">Register for &#8377;{{ event.fee }}</a>
+      {% else %}
+        <span class="btn closed">Registration Closed</span>
+      {% endif %}
+      <a class="btn ghost" href="{% url 'certificate_lookup' %}">Certificate Portal</a>
+    </div>
+  </div>
+  <aside class="speaker-card reveal">
+    <div class="guest-photo-wrap">
+      {% if event.expert_image_url %}
+        <img class="guest-photo" src="{{ event.expert_image_url }}" alt="{{ event.expert_name }}">
+      {% else %}
+        <div class="pulse-lock"><span></span><span></span><strong>WASVT</strong></div>
+      {% endif %}
+    </div>
+    <p class="eyebrow">Expert Speaker</p>
+    <h2>{{ event.expert_name }}</h2>
+    <p>{{ event.expert_title }}</p>
+    {% if event.expert_linkedin %}
+      <a class="btn ghost full" href="{{ event.expert_linkedin }}" target="_blank" rel="noopener">View LinkedIn Profile</a>
+    {% endif %}
+  </aside>
+</section>
+
+<section class="wasvt-console reveal">
+  <div class="console-window">
+    <div class="window-bar"><span></span><span></span><span></span><strong>wasvt.scan</strong></div>
+    <div class="terminal-lines">
+      <p><b>auth</b> validating sessions, roles, and trust boundaries</p>
+      <p><b>input</b> mapping forms, files, parameters, and data paths</p>
+      <p><b>risk</b> correlating findings with business impact</p>
+      <p><b>fix</b> converting reports into secure engineering action</p>
+    </div>
+  </div>
+  <div class="threat-grid">
+    <div><span>OWASP</span><strong>Top Risks</strong></div>
+    <div><span>Manual</span><strong>Testing</strong></div>
+    <div><span>Report</span><strong>Evidence</strong></div>
+    <div><span>Secure</span><strong>Remediate</strong></div>
+  </div>
+</section>
+
+<section class="telemetry-board reveal">
+  <article class="telemetry-card" data-live-card>
+    <p>Attack Surface Coverage</p>
+    <strong data-live-value>91%</strong>
+    <div class="meter"><span data-live-meter style="width:91%"></span></div>
+  </article>
+  <article class="telemetry-card" data-live-card>
+    <p>Validation Throughput</p>
+    <strong data-live-value>74%</strong>
+    <div class="meter"><span data-live-meter style="width:74%"></span></div>
+  </article>
+  <article class="telemetry-card" data-live-card>
+    <p>Report Quality Signal</p>
+    <strong data-live-value>88%</strong>
+    <div class="meter"><span data-live-meter style="width:88%"></span></div>
+  </article>
+  <article class="telemetry-card" data-live-card>
+    <p>Remediation Readiness</p>
+    <strong data-live-value>82%</strong>
+    <div class="meter"><span data-live-meter style="width:82%"></span></div>
+  </article>
+</section>
+
+<section class="ops-ribbon reveal">
+  <div class="ops-track">
+    <span>WASVT live mode</span>
+    <span>OWASP coverage</span>
+    <span>Session security checks</span>
+    <span>Input trust validation</span>
+    <span>Evidence-first reporting</span>
+    <span>Secure remediation workflow</span>
+    <span>PIEMR National Seminar</span>
+  </div>
+</section>
+
+<section class="metrics reveal">
+  <div><strong>{{ event.event_date }}</strong><span>Date</span></div>
+  <div><strong>{{ event.event_time }}</strong><span>Timing</span></div>
+  <div><strong>Offline</strong><span>Event mode</span></div>
+  <div><strong>&#8377;{{ event.fee }}</strong><span>Certificate included</span></div>
+</section>
+
+<section class="live-security reveal">
+  <div class="radar">
+    <span></span>
+    <i></i><i></i><i></i><i></i>
+  </div>
+  <div>
+    <p class="eyebrow">Live Security Focus</p>
+    <h2>From vulnerabilities to assurance thinking</h2>
+    <p class="muted">The page visualizes the seminar as a moving security system: traffic, signals, verification, and response. It keeps the event feeling active without pretending the schedule is finalized.</p>
+  </div>
+</section>
+
+<section class="split-section">
+  <div class="section-title reveal">
+    <p class="eyebrow">Learning Architecture</p>
+    <h2>Built like a security assessment journey</h2>
+    <p class="muted">{{ event.venue }}</p>
+  </div>
+  <div class="attack-map">
+    <article class="map-node reveal"><b>01</b><h3>Recon</h3><p>Assets, entry points, roles, sessions, and trust boundaries.</p></article>
+    <article class="map-node reveal"><b>02</b><h3>Exploit Thinking</h3><p>Vulnerability testing methodology across practical web app risk areas.</p></article>
+    <article class="map-node reveal"><b>03</b><h3>Evidence</h3><p>Clear proof, impact framing, reproducibility, and responsible reporting.</p></article>
+    <article class="map-node reveal"><b>04</b><h3>Remediation</h3><p>Secure design patterns, engineering fixes, and assurance workflows.</p></article>
+  </div>
+</section>
+
+<section class="coordinator-section reveal">
+  <div class="section-title">
+    <p class="eyebrow">Event Coordination</p>
+    <h2>Contact points</h2>
+  </div>
+  <div class="coordinator-grid">
+    <article class="coordinator-card">
+      <span>Faculty Coordinator</span>
+      <h3>{{ event.faculty_coordinator_name }}</h3>
+      <p>{{ event.faculty_coordinator_detail }}</p>
+      <a href="mailto:{{ event.faculty_coordinator_email }}">{{ event.faculty_coordinator_email }}</a>
+    </article>
+    <article class="coordinator-card">
+      <span>Student Coordinator</span>
+      <h3>{{ event.student_coordinator_name }}</h3>
+      <p>{{ event.student_coordinator_detail }}</p>
+      <a href="mailto:{{ event.student_coordinator_email }}">{{ event.student_coordinator_email }}</a>
+    </article>
+  </div>
+  {% if event.volunteer_details %}
+    <div class="volunteer-panel">
+      <p class="eyebrow">Volunteers</p>
+      <pre>{{ event.volunteer_details }}</pre>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

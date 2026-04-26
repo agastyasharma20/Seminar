@@ -1,0 +1,113 @@
+{% extends "events/base.html" %}
+{% block content %}
+<section class="admin-hero reveal">
+  <div>
+    <p class="eyebrow">PIEMR Control Room</p>
+    <h1>Event, seats, payments, certificates</h1>
+  </div>
+  <div class="hero-actions">
+    <a class="btn ghost" href="{% url 'admin_export' %}">Export CSV</a>
+    <a class="btn ghost" href="/django-admin/">Django Admin</a>
+  </div>
+</section>
+
+<section class="metrics admin-metrics reveal">
+  <div><strong>{{ event.seats_left }}/{{ event.seat_limit }}</strong><span>Seats left</span></div>
+  <div><strong>{{ counts.pending }}</strong><span>Approval queue</span></div>
+  <div><strong>{{ counts.approved }}</strong><span>Approved</span></div>
+  <div><strong>{% if event.registration_open %}Open{% else %}Closed{% endif %}</strong><span>Registration</span></div>
+</section>
+
+<section class="admin-grid">
+  <form class="glass-form reveal" method="post" action="{% url 'admin_settings' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    <p class="eyebrow">Live event settings</p>
+    <h2>Admin permissions</h2>
+    <label>Title<input name="title" value="{{ event.title }}" required></label>
+    <label>Organizer<input name="organizer" value="{{ event.organizer }}" required></label>
+    <label>Organized by<input name="organized_by" value="{{ event.organized_by }}" required></label>
+    <div class="field-grid">
+      <label>Event scope<input name="event_scope" value="{{ event.event_scope }}" required></label>
+      <label>Fee<input type="number" name="fee" value="{{ event.fee }}" min="0" required></label>
+      <label>Seat limit<input type="number" name="seat_limit" value="{{ event.seat_limit }}" min="1" required></label>
+      <label class="toggle-line">Registration open
+        <input type="checkbox" name="registration_open" {% if event.registration_open %}checked{% endif %}>
+      </label>
+    </div>
+    <label>Expert name<input name="expert_name" value="{{ event.expert_name }}" required></label>
+    <label>Expert title<input name="expert_title" value="{{ event.expert_title }}" required></label>
+    <label>Expert LinkedIn<input name="expert_linkedin" value="{{ event.expert_linkedin }}"></label>
+    <label>Expert image URL<input name="expert_image_url" value="{{ event.expert_image_url }}"></label>
+    <div class="field-grid">
+      <label>Date<input name="event_date" value="{{ event.event_date }}" required></label>
+      <label>Time<input name="event_time" value="{{ event.event_time }}" required></label>
+    </div>
+    <label>Venue<textarea name="venue" required>{{ event.venue }}</textarea></label>
+    <label>UPI note<input name="upi_note" value="{{ event.upi_note }}"></label>
+    <label>Upload UPI QR<input type="file" name="qr_code" accept=".png,.jpg,.jpeg,.webp"></label>
+    <label>Footer LinkedIn URL<input name="developer_linkedin" value="{{ event.developer_linkedin }}" placeholder="Agastya Sharma LinkedIn URL"></label>
+    <p class="eyebrow">Coordinators</p>
+    <label>Faculty coordinator name<input name="faculty_coordinator_name" value="{{ event.faculty_coordinator_name }}" required></label>
+    <div class="field-grid">
+      <label>Faculty detail<input name="faculty_coordinator_detail" value="{{ event.faculty_coordinator_detail }}" required></label>
+      <label>Faculty email<input type="email" name="faculty_coordinator_email" value="{{ event.faculty_coordinator_email }}" required></label>
+    </div>
+    <label>Student coordinator name<input name="student_coordinator_name" value="{{ event.student_coordinator_name }}" required></label>
+    <div class="field-grid">
+      <label>Student detail<input name="student_coordinator_detail" value="{{ event.student_coordinator_detail }}" required></label>
+      <label>Student email<input type="email" name="student_coordinator_email" value="{{ event.student_coordinator_email }}" required></label>
+    </div>
+    <label>Volunteer details<textarea name="volunteer_details" placeholder="One volunteer per line: Name | Role/Class | Email">{{ event.volunteer_details }}</textarea></label>
+    <button class="btn primary full" type="submit">Update event</button>
+  </form>
+
+  <div class="table-card reveal">
+    <h2>Manual approval queue</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Participant</th>
+            <th>Profile</th>
+            <th>Payment</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in rows %}
+            <tr>
+              <td>
+                <strong>{{ row.full_name }}</strong>
+                <span>{{ row.email }}</span>
+                <span>{{ row.phone }}</span>
+              </td>
+              <td>
+                {{ row.get_participant_type_display }}
+                {% for key, value in row.profile_data.items %}
+                  <span>{{ key }}: {{ value }}</span>
+                {% endfor %}
+              </td>
+              <td>
+                {% if row.transaction_id %}<strong>{{ row.transaction_id }}</strong>{% else %}<span>No transaction yet</span>{% endif %}
+                {% if row.payment_screenshot %}<a href="{{ row.payment_screenshot.url }}" target="_blank">View proof</a>{% endif %}
+              </td>
+              <td><mark class="{{ row.status }}">{{ row.get_status_display }}</mark></td>
+              <td class="admin-actions">
+                <form method="post" action="{% url 'admin_update_registration' row.id 'approved' %}">{% csrf_token %}<button>Approve</button></form>
+                <form method="post" action="{% url 'admin_update_registration' row.id 'rejected' %}">{% csrf_token %}<button>Reject</button></form>
+                <form method="post" action="{% url 'admin_update_registration' row.id 'payment_pending' %}">{% csrf_token %}<button>Reopen</button></form>
+                {% if row.status == "approved" %}
+                  <form method="post" action="{% url 'admin_email_certificate' row.id %}">{% csrf_token %}<button>Email Cert</button></form>
+                {% endif %}
+              </td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="5">No participants yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}
