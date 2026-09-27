@@ -1,9 +1,10 @@
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = "django-insecure-change-this-before-pythonanywhere"
-DEBUG = False
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "cardiq-local-development-only")
+DEBUG = os.getenv("DJANGO_DEBUG", "True").lower() == "true"
 ALLOWED_HOSTS = ["127.0.0.1", "localhost", "testserver", "seminar.pythonanywhere.com"]
 
 INSTALLED_APPS = [
@@ -75,10 +76,5 @@ LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "dashboard"
 LOGOUT_REDIRECT_URL = "home"
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "work.agastya20@gmail.com"
-EMAIL_HOST_PASSWORD = "yrct ikhi jaly pxhj"
-DEFAULT_FROM_EMAIL = "PIEMR Seminar <work.agastya20@gmail.com>"
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = "CardIQ <no-reply@cardiq.local>"

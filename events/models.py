@@ -107,3 +107,75 @@ class Registration(models.Model):
     def mark_certificate_emailed(self):
         self.certificate_emailed_at = timezone.now()
         self.save(update_fields=["certificate_emailed_at", "updated_at"])
+
+
+class Contact(models.Model):
+    """A contact is always owned by one user; staff may view centrally."""
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="cardiq_contacts")
+    full_name = models.CharField(max_length=180)
+    job_title = models.CharField(max_length=180, blank=True)
+    company = models.CharField(max_length=180, blank=True, db_index=True)
+    email = models.EmailField(blank=True, db_index=True)
+    phone = models.CharField(max_length=48, blank=True, db_index=True)
+    website = models.URLField(blank=True)
+    linkedin = models.URLField(blank=True)
+    address = models.TextField(blank=True)
+    industry = models.CharField(max_length=100, blank=True)
+    tags = models.JSONField(default=list, blank=True)
+    notes = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        indexes = [models.Index(fields=["user", "full_name"])]
+        ordering = ["-updated_at"]
+
+    def __str__(self):
+        return f"{self.full_name} ({self.company})"
+
+
+class Scan(models.Model):
+    class Status(models.TextChoices):
+        COMPLETE = "complete", "Complete"
+        REVIEW = "review", "Needs review"
+        FAILED = "failed", "Failed"
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="cardiq_scans")
+    contact = models.ForeignKey(Contact, on_delete=models.SET_NULL, related_name="scans", null=True, blank=True)
+    scan_code = models.CharField(max_length=18, unique=True, db_index=True)
+    original_name = models.CharField(max_length=255, blank=True)
+    original_image = models.ImageField(upload_to="cardiq/originals/", blank=True, null=True)
+    processed_image = models.ImageField(upload_to="cardiq/processed/", blank=True, null=True)
+    raw_text = models.TextField(blank=True)
+    structured_data = models.JSONField(default=dict, blank=True)
+    validation_result = models.JSONField(default=dict, blank=True)
+    qr_data = models.JSONField(default=dict, blank=True)
+    field_confidence = models.JSONField(default=dict, blank=True)
+    ocr_confidence = models.FloatField(default=0)
+    extraction_confidence = models.FloatField(default=0)
+    duplicate_status = models.CharField(max_length=32, default="No duplicate")
+    processing_ms = models.PositiveIntegerField(default=0)
+    device = models.CharField(max_length=80, default="Desktop")
+    platform = models.CharField(max_length=80, default="Browser")
+    status = models.CharField(max_length=16, choices=Status.choices, default=Status.COMPLETE, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        indexes = [models.Index(fields=["user", "created_at"])]
+
+    def __str__(self):
+        return self.scan_code
+
+
+class AuditLog(models.Model):
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="cardiq_audit_events")
+    action = models.CharField(max_length=100)
+    resource = models.CharField(max_length=80)
+    resource_id = models.CharField(max_length=80, blank=True)
+    result = models.CharField(max_length=40, default="success")
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        ordering = ["-created_at"]

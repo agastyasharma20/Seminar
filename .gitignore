@@ -4,3 +4,5 @@ staticfiles/
 media/payments/
 media/certificates/
 media/qr/
+media/cardiq/
+db.sqlite3
