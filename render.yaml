@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: cardiq
+    env: python
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
+    startCommand: gunicorn seminar_site.wsgi:application
+    envVars:
+      - key: DJANGO_DEBUG
+        value: "False"
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: cardiq-db
+          property: connectionString
+databases:
+  - name: cardiq-db
+    databaseName: cardiq
+    user: cardiq
